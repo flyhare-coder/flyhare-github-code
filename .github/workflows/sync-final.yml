@@ -10,51 +10,60 @@ jobs:
       - name: Log in to GHCR
         run: echo "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" | docker login ghcr.io -u flyhare-coder --password-stdin
 
-      - name: Sync Huge List
+      - name: Sync Master List
         run: |
           declare -A images=(
-            # 你刚才补全的“全家桶”清单
-            ["akaunting/akaunting:latest"]="my-akaunting"
-            ["blinko-space/blinko:latest"]="my-blinko"
-            ["dgtlmoon/changedetection.io:latest"]="my-changedetection"
-            ["chatwoot/chatwoot:latest"]="my-chatwoot"
-            ["crowdsecurity/crowdsec:latest"]="my-crowdsec"
-            ["debian:latest"]="my-debian"
-            ["docuseal/docuseal:latest"]="my-docuseal"
-            ["dolibarr/dolibarr:latest"]="my-dolibarr"
-            ["amir20/dozzle:latest"]="my-dozzle"
-            ["smeas/duplicacy:latest"]="my-duplicacy"
-            ["espocrm/espocrm:latest"]="my-espocrm"
-            ["filebrowser/filebrowser:latest"]="my-filebrowser"
-            ["grafana/grafana:latest"]="my-grafana"
-            ["linuxserver/heimdall:latest"]="my-heimdall"
-            ["kalcaddle/kodbox:latest"]="my-kodbox"
-            ["leantime/leantime:latest"]="my-leantime"
-            ["libretranslate/libretranslate:latest"]="my-libretranslate"
-            ["docker-mailserver/docker-mailserver:latest"]="my-mailserver"
-            ["matomo:latest"]="my-matomo"
-            ["mautic/mautic:latest"]="my-mautic"
-            ["metabase/metabase:latest"]="my-metabase"
-            ["n8nio/n8n:latest"]="my-n8n"
-            ["nextcloud:latest"]="my-nextcloud"
-            ["binwiederhier/ntfy:latest"]="my-ntfy"
-            ["odoo:latest"]="my-odoo"
-            ["onlyoffice/documentserver:latest"]="my-onlyoffice"
-            ["snipe/snipe-it:latest"]="my-snipeit"
-            ["froodle/s-pdf:latest"]="my-stirling-pdf"
-            ["louislam/uptime-kuma:latest"]="my-uptime-kuma"
-            ["vaultwarden/server:latest"]="my-vaultwarden"
-            ["bellis/wallos:latest"]="my-wallos"
-            # 核心四个工具
+            # --- 视频与工具组 ---
             ["xhofe/alist:latest"]="my-alist"
             ["imputnet/cobalt:latest"]="my-cobalt"
             ["alexta69/metube:latest"]="my-metube"
             ["sevenyc/video-decode:latest"]="my-vapi"
+            
+            # --- 企业与办公组 ---
+            ["akaunting/akaunting:latest"]="my-akaunting"
+            ["dolibarr/dolibarr:latest"]="my-dolibarr"
+            ["espocrm/espocrm:latest"]="my-espocrm"
+            ["odoo:latest"]="my-odoo"
+            ["snipe/snipe-it:latest"]="my-snipeit"
+            ["docuseal/docuseal:latest"]="my-docuseal"
+            ["onlyoffice/documentserver:latest"]="my-onlyoffice"
+            
+            # --- 笔记与项目管理组 ---
+            ["blinko-space/blinko:latest"]="my-blinko"
+            ["leantime/leantime:latest"]="my-leantime"
+            ["n8nio/n8n:latest"]="my-n8n"
+            ["metabase/metabase:latest"]="my-metabase"
+            ["chatwoot/chatwoot:latest"]="my-chatwoot"
+            
+            # --- 系统与监控组 ---
+            ["dgtlmoon/changedetection.io:latest"]="my-changedetection"
+            ["crowdsecurity/crowdsec:latest"]="my-crowdsec"
+            ["amir20/dozzle:latest"]="my-dozzle"
+            ["grafana/grafana:latest"]="my-grafana"
+            ["louislam/uptime-kuma:latest"]="my-uptime-kuma"
+            ["debian:latest"]="my-debian"
+            
+            # --- 存储与网络组 ---
+            ["filebrowser/filebrowser:latest"]="my-filebrowser"
+            ["nextcloud:latest"]="my-nextcloud"
+            ["kalcaddle/kodbox:latest"]="my-kodbox"
+            ["binwiederhier/ntfy:latest"]="my-ntfy"
+            ["vaultwarden/server:latest"]="my-vaultwarden"
+            ["docker-mailserver/docker-mailserver:latest"]="my-mailserver"
+            
+            # --- 其他神器 ---
+            ["smeas/duplicacy:latest"]="my-duplicacy"
+            ["linuxserver/heimdall:latest"]="my-heimdall"
+            ["libretranslate/libretranslate:latest"]="my-libretranslate"
+            ["matomo:latest"]="my-matomo"
+            ["mautic/mautic:latest"]="my-mautic"
+            ["froodle/s-pdf:latest"]="my-stirling-pdf"
+            ["bellis/wallos:latest"]="my-wallos"
           )
 
           for src in "${!images[@]}"; do
             dst=${images[$src]}
-            echo "正在极速同步: $src -> ghcr.io/flyhare-coder/$dst"
+            echo "🔥 3s男人速度同步中: $src -> $dst"
             docker pull $src
             docker tag $src ghcr.io/flyhare-coder/$dst:latest
             docker push ghcr.io/flyhare-coder/$dst:latest
