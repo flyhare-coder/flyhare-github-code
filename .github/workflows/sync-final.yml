@@ -13,58 +13,26 @@ jobs:
       - name: Sync Master List
         run: |
           declare -A images=(
-            # --- 视频与工具组 ---
             ["xhofe/alist:latest"]="my-alist"
             ["imputnet/cobalt:latest"]="my-cobalt"
             ["alexta69/metube:latest"]="my-metube"
             ["sevenyc/video-decode:latest"]="my-vapi"
-            
-            # --- 企业与办公组 ---
-            ["akaunting/akaunting:latest"]="my-akaunting"
-            ["dolibarr/dolibarr:latest"]="my-dolibarr"
-            ["espocrm/espocrm:latest"]="my-espocrm"
-            ["odoo:latest"]="my-odoo"
-            ["snipe/snipe-it:latest"]="my-snipeit"
-            ["docuseal/docuseal:latest"]="my-docuseal"
-            ["onlyoffice/documentserver:latest"]="my-onlyoffice"
-            
-            # --- 笔记与项目管理组 ---
-            ["blinko-space/blinko:latest"]="my-blinko"
-            ["leantime/leantime:latest"]="my-leantime"
-            ["n8nio/n8n:latest"]="my-n8n"
-            ["metabase/metabase:latest"]="my-metabase"
-            ["chatwoot/chatwoot:latest"]="my-chatwoot"
-            
-            # --- 系统与监控组 ---
-            ["dgtlmoon/changedetection.io:latest"]="my-changedetection"
-            ["crowdsecurity/crowdsec:latest"]="my-crowdsec"
-            ["amir20/dozzle:latest"]="my-dozzle"
-            ["grafana/grafana:latest"]="my-grafana"
             ["louislam/uptime-kuma:latest"]="my-uptime-kuma"
-            ["debian:latest"]="my-debian"
-            
-            # --- 存储与网络组 ---
-            ["filebrowser/filebrowser:latest"]="my-filebrowser"
-            ["nextcloud:latest"]="my-nextcloud"
-            ["kalcaddle/kodbox:latest"]="my-kodbox"
-            ["binwiederhier/ntfy:latest"]="my-ntfy"
             ["vaultwarden/server:latest"]="my-vaultwarden"
-            ["docker-mailserver/docker-mailserver:latest"]="my-mailserver"
-            
-            # --- 其他神器 ---
-            ["smeas/duplicacy:latest"]="my-duplicacy"
-            ["linuxserver/heimdall:latest"]="my-heimdall"
-            ["libretranslate/libretranslate:latest"]="my-libretranslate"
-            ["matomo:latest"]="my-matomo"
-            ["mautic/mautic:latest"]="my-mautic"
-            ["froodle/s-pdf:latest"]="my-stirling-pdf"
-            ["bellis/wallos:latest"]="my-wallos"
+            # 下面这些是怀疑对象，加上 || true 保证报错也不断掉
           )
 
           for src in "${!images[@]}"; do
             dst=${images[$src]}
-            echo "🔥 3s男人速度同步中: $src -> $dst"
-            docker pull $src
-            docker tag $src ghcr.io/flyhare-coder/$dst:latest
-            docker push ghcr.io/flyhare-coder/$dst:latest
+            echo "🔥 正在同步: $src"
+            
+            # 如果 pull 失败，记录一下但不退出脚本
+            if docker pull $src; then
+              docker tag $src ghcr.io/flyhare-coder/$dst:latest
+              docker push ghcr.io/flyhare-coder/$dst:latest
+              docker rmi $src ghcr.io/flyhare-coder/$dst:latest
+              echo "✅ $src 同步成功"
+            else
+              echo "❌ $src 镜像地址不对，已跳过"
+            fi
           done
