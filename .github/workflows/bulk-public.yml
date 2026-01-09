@@ -1,35 +1,27 @@
-name: Bulk Make Packages Public
+name: Bulk Delete Packages
 
 on:
-  workflow_dispatch: # 允许手动点击按钮运行
+  workflow_dispatch:
 
 jobs:
-  change-visibility:
+  delete-pkgs:
     runs-on: ubuntu-latest
     steps:
-      - name: Make all container images public
+      - name: Delete All
         run: |
-          # 定义你的 Token 和用户名
           TOKEN="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"
           USER="flyhare-coder"
-
-          # 1. 获取所有容器镜像列表
-          echo "正在从 GitHub API 获取镜像列表..."
+          
+          # 1. 自动抓取你名下所有的 21 个镜像名
           PKGS=$(curl -s -H "Authorization: Bearer $TOKEN" \
             "https://api.github.com/users/$USER/packages?package_type=container" | jq -r '.[].name')
 
-          # 2. 遍历并修改每一个镜像的可见性为 public
+          # 2. 循环彻底删除
           for PKG in $PKGS; do
-            echo "-----------------------------------"
-            echo "正在处理镜像: $PKG"
-            
-            # 发送 PATCH 请求修改可见性
-            RESULT=$(curl -L -s -X PATCH \
+            echo "正在销毁旧镜像: $PKG"
+            curl -L -X DELETE \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer $TOKEN" \
-              "https://api.github.com/user/packages/container/$PKG" \
-              -d '{"visibility":"public"}')
-            
-            echo "处理结果: $RESULT"
+              "https://api.github.com/user/packages/container/$PKG"
           done
-          echo "所有操作已完成！"
+          echo "所有私有镜像已清空！"
