@@ -1,0 +1,61 @@
+name: Sync All Public Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  push-ghcr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GHCR
+        run: echo "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" | docker login ghcr.io -u flyhare-coder --password-stdin
+
+      - name: Sync Huge List
+        run: |
+          declare -A images=(
+            # 你刚才补全的“全家桶”清单
+            ["akaunting/akaunting:latest"]="my-akaunting"
+            ["blinko-space/blinko:latest"]="my-blinko"
+            ["dgtlmoon/changedetection.io:latest"]="my-changedetection"
+            ["chatwoot/chatwoot:latest"]="my-chatwoot"
+            ["crowdsecurity/crowdsec:latest"]="my-crowdsec"
+            ["debian:latest"]="my-debian"
+            ["docuseal/docuseal:latest"]="my-docuseal"
+            ["dolibarr/dolibarr:latest"]="my-dolibarr"
+            ["amir20/dozzle:latest"]="my-dozzle"
+            ["smeas/duplicacy:latest"]="my-duplicacy"
+            ["espocrm/espocrm:latest"]="my-espocrm"
+            ["filebrowser/filebrowser:latest"]="my-filebrowser"
+            ["grafana/grafana:latest"]="my-grafana"
+            ["linuxserver/heimdall:latest"]="my-heimdall"
+            ["kalcaddle/kodbox:latest"]="my-kodbox"
+            ["leantime/leantime:latest"]="my-leantime"
+            ["libretranslate/libretranslate:latest"]="my-libretranslate"
+            ["docker-mailserver/docker-mailserver:latest"]="my-mailserver"
+            ["matomo:latest"]="my-matomo"
+            ["mautic/mautic:latest"]="my-mautic"
+            ["metabase/metabase:latest"]="my-metabase"
+            ["n8nio/n8n:latest"]="my-n8n"
+            ["nextcloud:latest"]="my-nextcloud"
+            ["binwiederhier/ntfy:latest"]="my-ntfy"
+            ["odoo:latest"]="my-odoo"
+            ["onlyoffice/documentserver:latest"]="my-onlyoffice"
+            ["snipe/snipe-it:latest"]="my-snipeit"
+            ["froodle/s-pdf:latest"]="my-stirling-pdf"
+            ["louislam/uptime-kuma:latest"]="my-uptime-kuma"
+            ["vaultwarden/server:latest"]="my-vaultwarden"
+            ["bellis/wallos:latest"]="my-wallos"
+            # 核心四个工具
+            ["xhofe/alist:latest"]="my-alist"
+            ["imputnet/cobalt:latest"]="my-cobalt"
+            ["alexta69/metube:latest"]="my-metube"
+            ["sevenyc/video-decode:latest"]="my-vapi"
+          )
+
+          for src in "${!images[@]}"; do
+            dst=${images[$src]}
+            echo "正在极速同步: $src -> ghcr.io/flyhare-coder/$dst"
+            docker pull $src
+            docker tag $src ghcr.io/flyhare-coder/$dst:latest
+            docker push ghcr.io/flyhare-coder/$dst:latest
+          done
